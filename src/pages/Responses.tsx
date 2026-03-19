@@ -5,6 +5,7 @@ import { Form, FormField, FormResponse } from '@/types/form';
 import { ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import Header from '@/components/Header';
 
 export default function Responses() {
   const { id } = useParams();
@@ -20,15 +21,27 @@ export default function Responses() {
   const loadData = async (formId: string) => {
     const [formRes, responsesRes] = await Promise.all([
       supabase.from('forms').select('*').eq('id', formId).single(),
-      supabase.from('responses').select('*').eq('form_id', formId).order('created_at', { ascending: false }),
+      supabase
+        .from('responses')
+        .select('*')
+        .eq('form_id', formId)
+        .order('created_at', { ascending: false }),
     ]);
     setForm(formRes.data as unknown as Form | null);
     setResponses((responsesRes.data || []) as unknown as FormResponse[]);
     setLoading(false);
   };
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="mono-progress w-32 animate-pulse" /></div>;
-  if (!form) return <div className="flex min-h-screen items-center justify-center"><p className="mono-label">Form not found</p></div>;
+  if (loading) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="mono-progress w-32 animate-pulse" />
+    </div>
+  );
+  if (!form) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <p className="mono-label">Form not found</p>
+    </div>
+  );
 
   const fields = [...(form.fields || [])].sort((a, b) => a.order - b.order);
 
@@ -52,21 +65,44 @@ export default function Responses() {
       return { avg: Math.round(avg * 10) / 10, min: Math.min(...nums), max: Math.max(...nums), count: nums.length };
     }
 
+    if (field.type === 'rating') {
+      const counts: Record<string, number> = { '1': 0, '2': 0, '3': 0, '4': 0, '5': 0 };
+      values.forEach(v => { const k = String(v); if (counts[k] !== undefined) counts[k]++; });
+      return Object.entries(counts).map(([name, value]) => ({ name: `${'★'.repeat(Number(name))}`, value }));
+    }
+
     return null;
   };
 
-  const COLORS = ['hsl(0,0%,0%)', 'hsl(0,0%,30%)', 'hsl(0,0%,50%)', 'hsl(0,0%,70%)', 'hsl(0,0%,85%)'];
+  const COLORS = ['#000000', '#4d4d4d', '#808080', '#b3b3b3', '#d9d9d9'];
+
+  const formatCellValue = (field: FormField, value: unknown): string => {
+    if (value === undefined || value === null || value === '') return '—';
+    if (field.type === 'checkbox' && Array.isArray(value)) {
+      return value.join(', ');
+    }
+    if (field.type === 'rating') {
+      const n = Number(value);
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
+    return String(value);
+  };
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-foreground sticky top-0 bg-background z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center gap-4">
-          <button onClick={() => navigate('/dashboard')} className="p-2 hover:bg-foreground hover:text-background transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-          </button>
-          <span className="mono-label text-muted-foreground">Responses</span>
-        </div>
-      </header>
+      <Header
+        left={
+          <>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="p-2 hover:bg-foreground hover:text-background transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
+            <span className="mono-label text-muted-foreground">Responses</span>
+          </>
+        }
+      />
 
       <main className="container mx-auto px-4 py-12 max-w-4xl">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -75,7 +111,9 @@ export default function Responses() {
             <div className="flex gap-6 mt-4">
               <div className="mono-card flex-1 text-center py-8">
                 <p className="text-2xl font-bold tabular-nums">{responses.length}</p>
-                <p className="mono-label text-muted-foreground mt-2">Response{responses.length !== 1 ? 's' : ''}</p>
+                <p className="mono-label text-muted-foreground mt-2">
+                  Response{responses.length !== 1 ? 's' : ''}
+                </p>
               </div>
               <div className="mono-card flex-1 text-center py-8">
                 <p className="text-2xl font-bold tabular-nums">{fields.length}</p>
@@ -89,7 +127,7 @@ export default function Responses() {
             {fields.map(field => {
               const stats = getFieldStats(field);
               if (!stats) {
-                // Text fields - show recent values
+                // Text / date / time fields — show recent values
                 const values = responses.map(r => (r.data as Record<string, unknown>)[field.id]).filter(Boolean);
                 return (
                   <div key={field.id} className="mono-card">
@@ -112,10 +150,10 @@ export default function Responses() {
                       <div className="flex-1 h-48">
                         <ResponsiveContainer width="100%" height="100%">
                           <BarChart data={stats}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="hsl(0,0%,85%)" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="#d9d9d9" />
                             <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                             <YAxis tick={{ fontSize: 11 }} allowDecimals={false} />
-                            <Bar dataKey="value" fill="hsl(0,0%,0%)" />
+                            <Bar dataKey="value" fill="#000000" />
                           </BarChart>
                         </ResponsiveContainer>
                       </div>
@@ -156,31 +194,36 @@ export default function Responses() {
             })}
           </div> */}
 
-          {/* Raw responses table */}
           {responses.length > 0 && (
             <div className="mt-12">
               <p className="mono-label mb-4">Raw Responses</p>
-              <div className="overflow-x-auto">
-                <table className="w-full border border-foreground">
-                  <thead className="bg-gray-200">
+              {/* Scoped horizontal scroll — only the table scrolls, not the whole viewport */}
+              <div className="overflow-x-auto w-full border border-foreground">
+                <table className="w-full border-collapse min-w-max">
+                  <thead className="bg-foreground text-background">
                     <tr>
-                      <th className="border border-foreground p-3 mono-label text-left">#</th>
+                      <th className="border-r border-background/20 p-3 mono-label text-left whitespace-nowrap">#</th>
                       {fields.map(f => (
-                        <th key={f.id} className="border border-foreground p-3 mono-label text-left">{f.label}</th>
+                        <th
+                          key={f.id}
+                          className="border-r border-background/20 p-3 mono-label text-left whitespace-nowrap"
+                        >
+                          {f.label || '(unlabelled)'}
+                        </th>
                       ))}
-                      <th className="border border-foreground p-3 mono-label text-left">Date</th>
+                      <th className="p-3 mono-label text-left whitespace-nowrap">Date</th>
                     </tr>
                   </thead>
                   <tbody>
                     {responses.map((resp, i) => (
                       <tr key={resp.id} className="hover:bg-muted transition-colors">
-                        <td className="border border-foreground p-3 text-sm tabular-nums">{i + 1}</td>
+                        <td className="border border-foreground/20 p-3 text-sm tabular-nums">{i + 1}</td>
                         {fields.map(f => (
-                          <td key={f.id} className="border border-foreground p-3 text-sm">
-                            {String((resp.data as Record<string, unknown>)[f.id] ?? '—')}
+                          <td key={f.id} className="border border-foreground/20 p-3 text-sm whitespace-nowrap max-w-[200px] overflow-hidden text-ellipsis">
+                            {formatCellValue(f, (resp.data as Record<string, unknown>)[f.id])}
                           </td>
                         ))}
-                        <td className="border border-foreground p-3 text-sm tabular-nums">
+                        <td className="border border-foreground/20 p-3 text-sm tabular-nums whitespace-nowrap">
                           {new Date(resp.created_at).toLocaleDateString()}
                         </td>
                       </tr>
@@ -188,6 +231,12 @@ export default function Responses() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {responses.length === 0 && (
+            <div className="mono-card border-dashed flex items-center justify-center py-16">
+              <p className="mono-label text-muted-foreground">No responses yet</p>
             </div>
           )}
         </motion.div>

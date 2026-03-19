@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
-import { Eye, EyeClosed } from 'lucide-react';
+import { Eye, EyeClosed, MailCheck } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -25,10 +26,13 @@ export default function Auth() {
     if (isSignUp) {
       const { error } = await signUpWithEmail(email, password);
       if (error) setError(error.message);
-      else setMessage('Check your email for verification link.');
+      else setMessage('Check your email for a verification link.');
     } else {
       const { error } = await signInWithEmail(email, password);
-      if (error) setError(error.message);
+      if (error) {
+        setError(error.message);
+        toast.error(error.message);
+      }
     }
   };
 
@@ -40,8 +44,8 @@ export default function Auth() {
         transition={{ duration: 0.3, ease: [0.19, 1, 0.22, 1] }}
         className="w-full max-w-md"
       >
-        <h1 className="text-2xl font-bold mb-2">Formo</h1>
-        <p className="mono-label text-muted-foreground mb-12">
+        <h1 className="text-2xl font-bold mb-2">Simple Forms</h1>
+        <p className="mono-label text-muted-foreground mb-4">
           {isSignUp ? 'Create your account' : 'Sign in to continue'}
         </p>
 
@@ -57,8 +61,13 @@ export default function Auth() {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {message && (
+            <p className="text-center text-sm border border-dotted border-green-500 rounded-md p-2">
+              <span className="text-green-500"><MailCheck className="inline-block mr-2" />{message}</span>
+            </p>
+          )}
           <div>
-            <label className="mono-label block mb-2">Email</label>
+            <label className="mono-label block">Email</label>
             <input
               type="email"
               value={email}
@@ -68,7 +77,7 @@ export default function Auth() {
             />
           </div>
           <div className="relative">
-            <label className="mono-label block mb-2">Password</label>
+            <label className="mono-label block">Password</label>
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -80,14 +89,11 @@ export default function Auth() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-4 top-10 text-sm"
+              className="absolute right-4 top-7 text-sm"
             >
               {showPassword ? <EyeClosed /> : <Eye />}
             </button>
           </div>
-
-          {error && <p className="text-destructive text-sm">{error}</p>}
-          {message && <p className="text-muted-foreground text-sm">{message}</p>}
 
           <button type="submit" className="mono-btn-primary w-full">
             {isSignUp ? 'Create Account' : 'Sign In'}

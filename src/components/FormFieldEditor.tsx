@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FormField, FieldType, FIELD_TYPE_LABELS } from '@/types/form';
-import { GripVertical, Trash2, Plus, X, ChevronDownCircle } from 'lucide-react';
+import { GripVertical, Trash2, Plus, X, ChevronDownCircle, Star } from 'lucide-react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
-  const [expanded, setExpanded] = useState(true);
+  const [expanded] = useState(true);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: field.id });
 
   const style = {
@@ -44,7 +44,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
         <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1">
           <GripVertical className="w-4 h-4" />
         </button>
-        <div className="w-full flex flex-col md:flex-row gap-2 items-start md:items-center">
+        <div className="w-full flex flex-col md:flex-row gap-2 items-start md:items-start">
           <div className="w-full">
             <textarea
               value={field.label}
@@ -56,8 +56,17 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
           <div className="relative flex-shrink-0">
             <select
               value={field.type}
-              onChange={(e) => onUpdate({ ...field, type: e.target.value as FieldType, options: ['dropdown', 'radio', 'checkbox'].includes(e.target.value) ? field.options || ['Option 1'] : undefined })}
-              className="w-full md:w-auto border border-foreground text-sm py-2 px-3 pr-8 appearance-none"
+              onChange={(e) => {
+                const newType = e.target.value as FieldType;
+                onUpdate({
+                  ...field,
+                  type: newType,
+                  options: ['dropdown', 'radio', 'checkbox'].includes(newType)
+                    ? field.options || ['Option 1']
+                    : undefined,
+                });
+              }}
+              className="w-full md:w-auto border border-foreground text-sm py-2 px-3 pr-8 appearance-none bg-background text-foreground"
             >
               {Object.entries(FIELD_TYPE_LABELS).map(([val, label]) => (
                 <option key={val} value={val}>{label}</option>
@@ -73,19 +82,25 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
           {(field.options || []).map((opt, i) => (
             <div key={i} className="flex items-center gap-2">
               <span className="mono-label w-6 text-muted-foreground">
-                {field.type === 'checkbox' ? `☐` : field.type === 'radio' ? `◯` : `▢`}
+                {field.type === 'checkbox' ? '☐' : field.type === 'radio' ? '◯' : '▢'}
               </span>
               <input
                 value={opt}
                 onChange={(e) => updateOption(i, e.target.value)}
                 className="mono-input flex-1 text-sm py-2 px-3"
               />
-              <button onClick={() => removeOption(i)} className="p-1 hover:bg-foreground hover:text-background transition-colors rounded-full">
+              <button
+                onClick={() => removeOption(i)}
+                className="p-1 hover:bg-foreground hover:text-background transition-colors rounded-full"
+              >
                 <X className="w-5 h-5 md:w-4 md:h-4" />
               </button>
             </div>
           ))}
-          <button onClick={addOption} className="flex items-center gap-1 mono-label text-muted-foreground hover:text-foreground transition-colors mt-2">
+          <button
+            onClick={addOption}
+            className="flex items-center gap-1 mono-label text-muted-foreground hover:text-foreground transition-colors mt-2"
+          >
             <Plus className="w-3 h-3" /> Add Option
           </button>
         </div>
@@ -113,6 +128,38 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
           </div>
         </div>
       )}
+
+      {field.type === 'date' && expanded && (
+        <div className="mt-4 ml-8">
+          <input
+            type="date"
+            disabled
+            className="mono-input text-sm py-2 px-3 opacity-50 cursor-not-allowed"
+            placeholder="Date picker preview"
+          />
+        </div>
+      )}
+
+      {field.type === 'time' && expanded && (
+        <div className="mt-4 ml-8">
+          <input
+            type="time"
+            disabled
+            className="mono-input text-sm py-2 px-3 opacity-50 cursor-not-allowed"
+            placeholder="Time picker preview"
+          />
+        </div>
+      )}
+
+      {field.type === 'rating' && expanded && (
+        <div className="mt-4 ml-8 flex items-center gap-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star key={star} className="w-6 h-6 text-muted-foreground opacity-50" />
+          ))}
+          <span className="mono-label text-muted-foreground ml-2">5-star rating</span>
+        </div>
+      )}
+
       <div className="w-full flex items-center justify-end gap-4 mt-4">
         <label className="flex items-center gap-1 mono-label text-muted-foreground cursor-pointer">
           <input
@@ -123,7 +170,10 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
           />
           Required
         </label>
-        <button onClick={onRemove} className="p-2 hover:bg-destructive hover:text-destructive-foreground transition-colors">
+        <button
+          onClick={onRemove}
+          className="p-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
+        >
           <Trash2 className="w-5 h-5" />
         </button>
       </div>

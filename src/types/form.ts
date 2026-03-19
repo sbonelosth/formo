@@ -1,4 +1,14 @@
-export type FieldType = 'text' | 'textarea' | 'dropdown' | 'checkbox' | 'radio' | 'color' | 'range';
+export type FieldType =
+  | 'text'
+  | 'textarea'
+  | 'dropdown'
+  | 'checkbox'
+  | 'radio'
+  | 'color'
+  | 'range'
+  | 'date'
+  | 'time'
+  | 'rating';
 
 export interface FormField {
   id: string;
@@ -35,4 +45,7 @@ export const FIELD_TYPE_LABELS: Record<FieldType, string> = {
   radio: 'Radio Buttons',
   color: 'Color Picker',
   range: 'Range Slider',
+  date: 'Date',
+  time: 'Time',
+  rating: '★ Rating',
 };

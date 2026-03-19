@@ -9,13 +9,9 @@ import {
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDvbDhXs1SmP104-QuNs2MYmwjdDAZUp2Y",
-  authDomain: "formo-6699.firebaseapp.com",
-  projectId: "formo-6699",
-  storageBucket: "formo-6699.firebasestorage.app",
-  messagingSenderId: "100723074498",
-  appId: "1:100723074498:web:7ffe78786fac8c8eb0e25b",
-  measurementId: "G-7PYVSE7T3T"
+  apiKey: import.meta.env.VITE_GOOGLE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_GOOGLE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_GOOGLE_FIREBASE_PROJECT_ID,
 };
 
 // Initialize Firebase

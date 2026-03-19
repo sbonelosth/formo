@@ -1,29 +1,39 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
+import Header from '@/components/Header';
 
 export default function Index() {
   const navigate = useNavigate();
   const { user, loading } = useAuth();
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="mono-progress w-32 animate-pulse" /></div>;
+  if (loading) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="mono-progress w-32 animate-pulse" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="border-b border-foreground sticky top-0 bg-background z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold">Formo</h1>
-          {user ? (
+      <Header
+        left={
+          <div className='flex items-center gap-2'>
+            <img src="/favicon.ico" alt="Formo" className="h-6 w-6" />
+            <h1 className="text-lg">Formo</h1>
+          </div>
+        }
+        right={
+          user ? (
             <button onClick={() => navigate('/dashboard')} className="mono-btn-primary text-sm py-2 px-6">
               Dashboard
             </button>
           ) : (
-            <button onClick={() => navigate('/auth')} className="mono-btn-primary text-sm py-2 px-6">
+            <button onClick={() => navigate('/auth')} className="text-md py-2 pr-4 font-medium">
               Sign In
             </button>
-          )}
-        </div>
-      </header>
+          )
+        }
+      />
 
       <main className="flex-1 flex items-center justify-center p-4">
         <motion.div
@@ -35,9 +45,6 @@ export default function Index() {
           <h2 className="text-2xl md:text-7xl font-bold mb-6 leading-tight">
             Create forms.<br />Collect data.<br />No distractions.
           </h2>
-          {/* <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-md mx-auto">
-            A brutalist form builder for creators who value precision over decoration.
-          </p> */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => navigate(user ? '/builder' : '/auth')}
@@ -57,7 +64,9 @@ export default function Index() {
 
       <footer className="border-t border-foreground py-6">
         <div className="container mx-auto px-4 text-center">
-          <p className="mono-label text-muted-foreground">© {new Date().getFullYear()} abumanga project. All rights reserved.</p>
+          <p className="mono-label text-muted-foreground">
+            © {new Date().getFullYear()} abumanga project. All rights reserved.
+          </p>
         </div>
       </footer>
     </div>

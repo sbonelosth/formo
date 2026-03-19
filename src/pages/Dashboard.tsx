@@ -6,6 +6,7 @@ import { Form } from '@/types/form';
 import { Plus, Share2, BarChart3, LogOut, Trash2, UserCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
+import Header from '@/components/Header';
 
 export default function Dashboard() {
   const { user, signOut } = useAuth();
@@ -28,7 +29,6 @@ export default function Dashboard() {
 
     if (data) {
       setForms(data as unknown as Form[]);
-      // Load response counts
       const counts: Record<string, number> = {};
       for (const form of data) {
         const { count } = await supabase
@@ -51,39 +51,51 @@ export default function Dashboard() {
     }
   };
 
-  const handleUserMenu = () => {
-    setShowUserMenu(!showUserMenu);
-  };
-
   const handleSignOut = async () => {
     await signOut();
     navigate('/');
   };
 
-  if (loading) return <div className="flex min-h-screen items-center justify-center"><div className="mono-progress w-32 animate-pulse" /></div>;
+  if (loading) return (
+    <div className="flex min-h-screen items-center justify-center">
+      <div className="mono-progress w-32 animate-pulse" />
+    </div>
+  );
 
   return (
     <div className="min-h-screen">
-      <header className="border-b border-foreground sticky top-0 bg-background z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <img src="/favicon.ico" alt="Formo" className="text-xl font-bold" />
-          <div className="flex items-center gap-3">
-            <button onClick={handleUserMenu}>
+      <Header
+        left={
+          <button className='cursor-default'>
+            <img src="/favicon.ico" alt="Formo" className="h-6 w-6" />
+          </button>
+        }
+        right={
+          <div className="relative">
+            <button onClick={() => setShowUserMenu(v => !v)} className="p-2 hover:bg-foreground hover:text-background transition-colors">
               <UserCircle className="w-5 h-5" />
             </button>
+            {showUserMenu && (
+              <div
+                className="absolute right-0 top-full mt-1 bg-background border border-foreground shadow-md py-2 w-64 z-20"
+                onMouseLeave={() => setShowUserMenu(false)}
+              >
+                <p className="mono-label text-xs text-muted-foreground px-4 py-2">
+                  Signed in as<br />
+                  <span className="font-medium text-foreground">{user?.email}</span>
+                </p>
+                <button
+                  onClick={handleSignOut}
+                  className="w-full text-left text-sm px-4 py-2 hover:text-destructive transition-colors flex items-center gap-2"
+                >
+                  <LogOut className="w-4 h-4" />
+                  Sign Out
+                </button>
+              </div>
+            )}
           </div>
-        </div>
-      </header>
-
-      {showUserMenu && (
-        <div className="absolute right-4 top-14 bg-background border border-foreground shadow-md py-2 w-auto z-20" onMouseLeave={() => setShowUserMenu(false)}>
-          <p className="mono-label text-sm text-muted-foreground px-4 py-2">Signed in as <br /> <span className="font-medium">{user?.email}</span></p>
-          <button onClick={handleSignOut} className="w-full text-left text-sm px-4 py-2 hover:text-destructive transition-colors flex items-center gap-2">
-            <LogOut className="w-4 h-4" />
-            Sign Out
-          </button>
-        </div>
-      )}
+        }
+      />
 
       <main className="container mx-auto px-4 py-12">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
@@ -92,8 +104,12 @@ export default function Dashboard() {
               <h2 className="text-xl font-normal">Managed Forms</h2>
               <p className="mono-label text-muted-foreground mt-2">{forms.length} Total</p>
             </div>
-            <button onClick={() => navigate('/builder')} className="mono-btn-primary text-sm py-1 px-3 flex items-center gap-2">
-              <Plus className="w-4 h-4" /> New
+            <button
+              onClick={() => navigate('/builder')}
+              className="w-12 aspect-square mono-btn-secondary text-sm flex items-center gap-2"
+              title='Create a new form'
+            >
+              <Plus className="w-6 h-6" />
             </button>
           </div>
 
@@ -118,7 +134,9 @@ export default function Dashboard() {
                   <div className="flex items-start justify-between mb-4">
                     <h3 className="font-normal text-lg">{form.title || 'Untitled'}</h3>
                     {form.published && (
-                      <span className="mono-label text-xs bg-foreground text-background px-2 py-0.5">Active</span>
+                      <span className="mono-label text-xs bg-foreground text-background px-2 py-0.5">
+                        Active
+                      </span>
                     )}
                   </div>
                   <p className="mono-label text-muted-foreground mb-6">
@@ -127,7 +145,9 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <BarChart3 className="w-4 h-4 text-muted-foreground" />
-                      <span className="mono-label tabular-nums">{responseCounts[form.id] || 0} Responses</span>
+                      <span className="mono-label tabular-nums">
+                        {responseCounts[form.id] || 0} Responses
+                      </span>
                     </div>
                     <div className="flex gap-1">
                       {form.published && (
