@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Sans:wght@400;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 20%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 0%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 0%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 90%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 0%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 0%;
+    --input: 0 0% 0%;
+    --ring: 0 0% 0%;
+    --radius: 0rem;
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 0 0% 15%;
+    --sidebar-primary: 0 0% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 0 0% 96%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 0%;
+    --sidebar-ring: 0 0% 0%;
+  }
+
+  .dark {
+    --background: 0 0% 20%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 5%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 0%;
+    --secondary: 0 0% 15%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 0 0% 15%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 100%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 100%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 96%;
+    --sidebar-primary: 0 0% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 0 0% 15%;
+    --sidebar-ring: 0 0% 59%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    letter-spacing: -0.04em;
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .mono-label {
+    @apply text-xs tracking-widest font-semibold;
+  }
+  .mono-card {
+    @apply bg-white border border-foreground p-6 transition-all duration-150;
+  }
+  .mono-card-hover {
+    @apply mono-card hover:-translate-x-0.5 hover:-translate-y-0.5;
+    box-shadow: none;
+  }
+  .mono-card-hover:hover {
+    box-shadow: 4px 4px 0px 0px hsl(var(--foreground));
+  }
+  .mono-input {
+    @apply border-b border-foreground p-4 bg-background text-foreground outline-none transition-all duration-75 rounded-none;
+  }
+  .mono-input:focus {
+    border-bottom-width: 4px;
+  }
+  .mono-btn-primary {
+    @apply bg-foreground text-background px-4 py-2 uppercase rounded tracking-widest font-bold border border-foreground transition-colors duration-150 rounded-none;
+  }
+  .mono-btn-primary:hover {
+    @apply bg-background text-foreground;
+  }
+  .mono-btn-secondary {
+    @apply bg-background text-foreground px-4 py-2 uppercase rounded tracking-widest font-bold border border-foreground transition-colors duration-150 rounded-none;
+  }
+  .mono-btn-secondary:hover {
+    @apply bg-foreground text-background;
+  }
+  .mono-progress {
+    @apply h-1 bg-foreground;
+  }
+}
