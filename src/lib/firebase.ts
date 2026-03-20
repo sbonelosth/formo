@@ -33,9 +33,3 @@ export const githubProvider = new GithubAuthProvider();
 githubProvider.setCustomParameters({
   allow_signup: 'true'
 });
-
-declare global {
-  interface Window {
-    google: typeof google;
-  }
-}

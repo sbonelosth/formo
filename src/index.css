@@ -76,6 +76,7 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'Poppins', sans-serif;
   }
 
   body {
@@ -101,6 +102,26 @@
 }
 
 @layer components {
+  .logo-icon {
+    @apply w-8 aspect-square;
+  }
+
+  .avatar-sm {
+    @apply w-7 aspect-square rounded-full object-cover;
+  }
+
+  .avatar-lg {
+    @apply w-24 aspect-square rounded-full object-cover my-2;
+  }
+
+  .no-avatar {
+    @apply w-7 aspect-square rounded-full border border-foreground bg-foreground text-background flex items-center justify-center text-xs font-bold;
+  }
+
+  .no-avatar-lg {
+    @apply w-24 aspect-square rounded-full border border-foreground bg-foreground text-background flex items-center justify-center text-sm font-bold my-2;
+  }
+
   .mono-label {
     @apply text-sm tracking-widest font-semibold;
   }

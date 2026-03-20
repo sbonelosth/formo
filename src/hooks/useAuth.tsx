@@ -10,7 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithGoogle: () => void;
   signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
-  signUpWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signUpWithEmail: (email: string, password: string) => Promise<{ error: Error | null; alreadyExists: boolean; isGoogleAccount: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -71,10 +71,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             console.error('One Tap sign-in failed:', err);
           }
         },
-        // auto_select: false — never silently re-auth without user interaction.
-        // This was the root cause of the re-auth loop after sign out.
         auto_select: false,
         cancel_on_tap_outside: true,
+        // Opt out of FedCM (Chrome's new flow) — it's still flaky and gets
+        // blocked by users who dismissed it or have strict privacy settings.
+        // This forces the legacy iframe-based One Tap which is more reliable.
+        use_fedcm_for_prompt: false,
       });
 
       window.google.accounts.id.prompt((notification: { isNotDisplayed: () => boolean; getNotDisplayedReason: () => string; isSkippedMoment: () => boolean; getSkippedReason: () => string }) => {
@@ -104,13 +106,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error as Error | null };
   };
 
-  const signUpWithEmail = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUpWithEmail = async (email: string, password: string): Promise<{
+    error: Error | null;
+    alreadyExists: boolean;
+    isGoogleAccount: boolean;
+  }> => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: { emailRedirectTo: window.location.origin },
     });
-    return { error: error as Error | null };
+
+    if (error) return { error: error as Error, alreadyExists: false, isGoogleAccount: false };
+
+    // Supabase returns a fake success for existing emails (to prevent enumeration)
+    // but the user object will have an empty identities array as the signal.
+    if (data.user && data.user.identities?.length === 0) {
+      // Distinguish between a Google-only account and a password account:
+      // Google accounts have no password identity, so attempting a dummy
+      // password sign-in returns "Invalid login credentials" for both —
+      // instead we inspect the identity providers on the returned user.
+      // Since identities is empty on the duplicate response, we check
+      // by attempting signInWithPassword: if it fails with "Email not confirmed"
+      // the account exists with a password. If it fails with "Invalid login
+      // credentials" it's likely a Google-only (or other OAuth) account.
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password: '##probe##',
+      });
+
+      const isGoogleAccount = signInError?.message?.toLowerCase().includes('invalid login credentials') ?? false;
+
+      return { error: null, alreadyExists: true, isGoogleAccount };
+    }
+
+    return { error: null, alreadyExists: false, isGoogleAccount: false };
   };
 
   const signOut = async () => {

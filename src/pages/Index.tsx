@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
+import UserMenu from '@/components/UserMenu';
 
 export default function Index() {
   const navigate = useNavigate();
@@ -18,15 +19,13 @@ export default function Index() {
       <Header
         left={
           <div className='flex items-center gap-2'>
-            <img src="/favicon.ico" alt="Formo" className="h-6 w-6" />
-            <h1 className="text-lg">Formo</h1>
+            <img src="/favicon.ico" alt="Simple Forms" className="logo-icon" />
+            <h1 className="text-lg">Simple Forms</h1>
           </div>
         }
         right={
           user ? (
-            <button onClick={() => navigate('/dashboard')} className="mono-btn-primary text-sm py-2 px-6">
-              Dashboard
-            </button>
+            <UserMenu />
           ) : (
             <button onClick={() => navigate('/auth')} className="text-md py-2 pr-4 font-medium">
               Sign In

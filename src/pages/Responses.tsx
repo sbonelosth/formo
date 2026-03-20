@@ -93,11 +93,8 @@ export default function Responses() {
       <Header
         left={
           <>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="p-2 hover:bg-foreground hover:text-background transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
+            <button onClick={() => navigate('/dashboard')}>
+              <img src="/favicon.ico" alt="Simple Forms" className="logo-icon" />
             </button>
             <span className="mono-label text-muted-foreground">Responses</span>
           </>
@@ -200,7 +197,7 @@ export default function Responses() {
               {/* Scoped horizontal scroll — only the table scrolls, not the whole viewport */}
               <div className="overflow-x-auto w-full border border-foreground">
                 <table className="w-full border-collapse min-w-max">
-                  <thead className="bg-foreground text-background">
+                  <thead className="bg-gray-800/20 text-foreground">
                     <tr>
                       <th className="border-r border-background/20 p-3 mono-label text-left whitespace-nowrap">#</th>
                       {fields.map(f => (

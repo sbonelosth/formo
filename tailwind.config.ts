@@ -22,7 +22,6 @@ export default {
         sans: ['"Geist Sans"', "system-ui", "-apple-system", "sans-serif"],
       },
       colors: {
-        // CSS vars are now plain hex, so use var() directly (no hsl() wrapper)
         border: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",

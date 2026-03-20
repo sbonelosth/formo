@@ -224,7 +224,7 @@ export default function FormBuilder() {
         left={
           <>
             <button onClick={() => safeNavigate('/dashboard')}>
-              <img src="/favicon.ico" className="h-6 w-6 cursor-pointer" alt="Formo" />
+              <img src="/favicon.ico" className="logo-icon" alt="Simple Forms" />
             </button>
             <span className="text-muted-foreground text-sm hidden sm:block">
               {title || 'Untitled Form'}

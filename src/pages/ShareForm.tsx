@@ -40,11 +40,8 @@ export default function ShareForm() {
       <Header
         left={
           <>
-            <button
-              onClick={() => navigate('/dashboard')}
-              className="p-2 hover:bg-foreground hover:text-background transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
+            <button onClick={() => navigate('/dashboard')}>
+              <img src="/favicon.ico" alt="Simple Forms" className="logo-icon" />
             </button>
             <span className="mono-label text-muted-foreground">Share Form</span>
           </>

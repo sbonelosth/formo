@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { Form } from '@/types/form';
-import { Plus, Share2, BarChart3, LogOut, Trash2, UserCircle } from 'lucide-react';
+import { Plus, Share2, BarChart3, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 import Header from '@/components/Header';
+import UserMenu from '@/components/UserMenu';
 
 export default function Dashboard() {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [forms, setForms] = useState<Form[]>([]);
   const [responseCounts, setResponseCounts] = useState<Record<string, number>>({});
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -51,11 +51,6 @@ export default function Dashboard() {
     }
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
-  };
-
   if (loading) return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="mono-progress w-32 animate-pulse" />
@@ -66,34 +61,13 @@ export default function Dashboard() {
     <div className="min-h-screen">
       <Header
         left={
-          <button className='cursor-default'>
-            <img src="/favicon.ico" alt="Formo" className="h-6 w-6" />
-          </button>
+          <>
+            <img src="/favicon.ico" alt="Simple Forms" className="logo-icon" />
+            <span className="text-muted-foreground text-sm hidden sm:block">Simple Forms</span>
+          </>
         }
         right={
-          <div className="relative">
-            <button onClick={() => setShowUserMenu(v => !v)} className="p-2 hover:bg-foreground hover:text-background transition-colors">
-              <UserCircle className="w-5 h-5" />
-            </button>
-            {showUserMenu && (
-              <div
-                className="absolute right-0 top-full mt-1 bg-background border border-foreground shadow-md py-2 w-64 z-20"
-                onMouseLeave={() => setShowUserMenu(false)}
-              >
-                <p className="mono-label text-xs text-muted-foreground px-4 py-2">
-                  Signed in as<br />
-                  <span className="font-medium text-foreground">{user?.email}</span>
-                </p>
-                <button
-                  onClick={handleSignOut}
-                  className="w-full text-left text-sm px-4 py-2 hover:text-destructive transition-colors flex items-center gap-2"
-                >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
-                </button>
-              </div>
-            )}
-          </div>
+          <UserMenu />
         }
       />
 

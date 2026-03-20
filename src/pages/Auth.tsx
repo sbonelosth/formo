@@ -24,9 +24,17 @@ export default function Auth() {
     setMessage('');
 
     if (isSignUp) {
-      const { error } = await signUpWithEmail(email, password);
-      if (error) setError(error.message);
-      else setMessage('Check your email for a verification link.');
+      const { error, alreadyExists, isGoogleAccount } = await signUpWithEmail(email, password);
+
+      if (isGoogleAccount) {
+        setError('This email is linked to a Google account. Please use "Continue with Google" to sign in.');
+      } else if (alreadyExists) {
+        setError('An account with this email already exists. Try signing in instead.');
+      } else if (error) {
+        setError(error.message);
+      } else {
+        setMessage('Check your email for a verification link.');
+      }
     } else {
       const { error } = await signInWithEmail(email, password);
       if (error) {
@@ -64,6 +72,20 @@ export default function Auth() {
           {message && (
             <p className="text-center text-sm border border-dotted border-green-500 rounded-md p-2">
               <span className="text-green-500"><MailCheck className="inline-block mr-2" />{message}</span>
+            </p>
+          )}
+          {error && (
+            <p className="text-destructive text-sm border border-dotted border-destructive rounded-md p-2">
+              {error}
+              {(error.includes('Google account') || error.includes('already exists')) && (
+                <button
+                  type="button"
+                  onClick={() => { setIsSignUp(false); setError(''); }}
+                  className="block mt-1 underline text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Switch to sign in →
+                </button>
+              )}
             </p>
           )}
           <div>
