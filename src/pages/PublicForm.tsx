@@ -227,7 +227,7 @@ function renderField(
                       [field.id]: newValue.length > 0 ? newValue : undefined,
                     }));
                   }}
-                  className="w-5 h-5 accent-foreground"
+                  className="custom-check"
                 />
                 <span className="text-sm">{option}</span>
               </label>

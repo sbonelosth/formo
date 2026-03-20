@@ -41,7 +41,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
   return (
     <div ref={setNodeRef} style={style} className="mono-card mb-4">
       <div className="relative flex items-center gap-2">
-        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1">
+        <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing">
           <GripVertical className="w-4 h-4" />
         </button>
         <div className="w-full flex flex-col md:flex-row gap-2 items-start md:items-start">
@@ -78,7 +78,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
       </div>
 
       {needsOptions && expanded && (
-        <div className="w-[90%] mt-4 ml-8 space-y-2">
+        <div className="mt-4 space-y-2">
           {(field.options || []).map((opt, i) => (
             <div key={i} className="flex items-center gap-2">
               <span className="mono-label w-6 text-muted-foreground">
@@ -99,7 +99,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
           ))}
           <button
             onClick={addOption}
-            className="flex items-center gap-1 mono-label text-muted-foreground hover:text-foreground transition-colors mt-2"
+            className="flex items-center gap-1 mono-label text-muted-foreground hover:text-foreground transition-colors mt-4"
           >
             <Plus className="w-3 h-3" /> Add Option
           </button>
@@ -166,7 +166,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
             type="checkbox"
             checked={field.required || false}
             onChange={(e) => onUpdate({ ...field, required: e.target.checked })}
-            className="accent-foreground"
+            className="custom-check"
           />
           Required
         </label>

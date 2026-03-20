@@ -128,7 +128,7 @@
 
   /* Use bg-card so cards respect dark mode */
   .mono-card {
-    @apply bg-card text-card-foreground border border-foreground p-6 transition-all duration-150;
+    @apply bg-card text-card-foreground border border-foreground py-6 px-4 transition-all duration-150;
   }
 
   .mono-card-hover {
@@ -166,5 +166,24 @@
 
   .mono-progress {
     @apply h-1 bg-foreground;
+  }
+
+  input[type='checkbox'].custom-check {
+    @apply appearance-none w-5 h-5 border border-foreground bg-background rounded-none cursor-pointer relative flex-shrink-0;
+    transition: background-color 0.1s, border-color 0.1s;
+  }
+  input[type='checkbox'].custom-check:checked {
+    @apply bg-foreground border-foreground;
+  }
+  input[type='checkbox'].custom-check:checked::after {
+    content: '';
+    @apply absolute inset-0 m-auto;
+    width: 5px;
+    height: 9px;
+    border: 2px solid;
+    @apply border-background;
+    border-top: none;
+    border-left: none;
+    transform: rotate(45deg) translate(-1px, -1px);
   }
 }
