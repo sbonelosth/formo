@@ -30,13 +30,13 @@ export default function FormBuilder() {
   const { user } = useAuth();
 
   const [title, setTitle] = useState('Untitled Form');
+  const [description, setDescription] = useState('');
   const [fields, setFields] = useState<FormField[]>([]);
   const [saving, setSaving] = useState(false);
   const [formId, setFormId] = useState(id || '');
   const [isDirty, setIsDirty] = useState(false);
   const [pendingPath, setPendingPath] = useState<string | null>(null);
 
-  // Intercepts navigation: shows modal if dirty, otherwise navigates immediately
   const safeNavigate = useCallback((path: string, options?: NavigateOptions) => {
     if (isDirty) {
       setPendingPath(path);
@@ -45,8 +45,7 @@ export default function FormBuilder() {
     }
   }, [isDirty, navigate]);
 
-  // Track saved state to compare against
-  const savedStateRef = useRef({ title: 'Untitled Form', fields: '[]' });
+  const savedStateRef = useRef({ title: 'Untitled Form', description: '', fields: '[]' });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -57,18 +56,16 @@ export default function FormBuilder() {
     if (id) loadForm(id);
   }, [id]);
 
-  // Mark dirty when title or fields change after initial load
   const isLoadedRef = useRef(false);
   useEffect(() => {
     if (!isLoadedRef.current) return;
-    const currentState = JSON.stringify(fields);
     const dirty =
       title !== savedStateRef.current.title ||
-      currentState !== savedStateRef.current.fields;
+      description !== savedStateRef.current.description ||
+      JSON.stringify(fields) !== savedStateRef.current.fields;
     setIsDirty(dirty);
-  }, [title, fields]);
+  }, [title, description, fields]);
 
-  // Warn on browser tab close / refresh
   useEffect(() => {
     const handler = (e: BeforeUnloadEvent) => {
       if (isDirty) {
@@ -80,27 +77,25 @@ export default function FormBuilder() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [isDirty]);
 
-
   const loadForm = async (fid: string) => {
     const { data } = await supabase.from('forms').select('*').eq('id', fid).single();
     if (data) {
       setTitle(data.title);
+      setDescription(data.description || '');
       const loadedFields = (data.fields as unknown as FormField[]) || [];
       setFields(loadedFields);
       setFormId(data.id);
       savedStateRef.current = {
         title: data.title,
+        description: data.description || '',
         fields: JSON.stringify(loadedFields),
       };
     }
     isLoadedRef.current = true;
   };
 
-  // For new forms, mark as loaded immediately
   useEffect(() => {
-    if (!id) {
-      isLoadedRef.current = true;
-    }
+    if (!id) isLoadedRef.current = true;
   }, [id]);
 
   const addField = (type: FieldType) => {
@@ -149,33 +144,33 @@ export default function FormBuilder() {
     if (formId) {
       const { error } = await supabase
         .from('forms')
-        .update({ title, fields: orderedFields })
+        .update({ title, description, fields: orderedFields })
         .eq('id', formId);
       if (error) {
         toast.error(error.message);
       } else {
-        savedStateRef.current = { title, fields: JSON.stringify(orderedFields) };
+        savedStateRef.current = { title, description, fields: JSON.stringify(orderedFields) };
         setIsDirty(false);
         toast.success('Form saved');
       }
     } else {
       const { data, error } = await supabase
         .from('forms')
-        .insert({ title, fields: orderedFields, user_id: user.id, published: false })
+        .insert({ title, description, fields: orderedFields, user_id: user.id, published: false })
         .select()
         .single();
       if (error) {
         toast.error(error.message);
       } else if (data) {
         setFormId(data.id);
-        savedStateRef.current = { title, fields: JSON.stringify(orderedFields) };
+        savedStateRef.current = { title, description, fields: JSON.stringify(orderedFields) };
         setIsDirty(false);
         toast.success('Form created');
         navigate(`/builder/${data.id}`, { replace: true });
       }
     }
     setSaving(false);
-  }, [user, formId, title, fields, navigate]);
+  }, [user, formId, title, description, fields, navigate]);
 
   const publishForm = async () => {
     if (!formId) await saveForm();
@@ -197,9 +192,7 @@ export default function FormBuilder() {
     setPendingPath(null);
   };
 
-  const handleModalStay = () => {
-    setPendingPath(null);
-  };
+  const handleModalStay = () => setPendingPath(null);
 
   const FIELD_TYPES: FieldType[] = [
     'text', 'textarea', 'dropdown', 'checkbox', 'radio', 'color', 'range', 'date', 'time', 'rating',
@@ -257,14 +250,28 @@ export default function FormBuilder() {
         }
       />
 
-      <main className="container mx-auto px-4 py-12 max-w-2xl">
+      <main className="container bg-background mx-auto px-4 py-12 max-w-2xl">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
+
           <label className="mono-label text-muted-foreground mb-2 block">Form Title</label>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="text-2xl bg-transparent border-none outline-none w-full mb-12 placeholder:text-muted-foreground text-foreground"
+            className="text-2xl bg-transparent border-none outline-none w-full placeholder:text-muted-foreground text-foreground"
             placeholder="Form title"
+          />
+
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full mt-3 mb-12 bg-transparent border-none outline-none resize-none text-muted-foreground placeholder:text-muted-foreground text-sm leading-relaxed"
+            placeholder="Add form description (optional)"
+            rows={2}
+            onInput={(e) => {
+              const el = e.currentTarget;
+              el.style.height = 'auto';
+              el.style.height = `${el.scrollHeight}px`;
+            }}
           />
 
           <DndContext
@@ -308,7 +315,6 @@ export default function FormBuilder() {
         </motion.div>
       </main>
 
-      {/* Unsaved Changes Modal */}
       <AnimatePresence>
         {pendingPath !== null && (
           <motion.div

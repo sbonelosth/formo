@@ -114,13 +114,13 @@ export default function Dashboard() {
                     )}
                   </div>
                   <p className="mono-label text-muted-foreground mb-6">
-                    {(form.fields || []).length} Fields
+                    {(form.fields || []).length} Field{(form.fields || []).length !== 1 && 's'}
                   </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
                       <BarChart3 className="w-4 h-4 text-muted-foreground" />
                       <span className="mono-label tabular-nums">
-                        {responseCounts[form.id] || 0} Responses
+                        {responseCounts[form.id] || 0} Response{(responseCounts[form.id] || 0) !== 1 && 's'}
                       </span>
                     </div>
                     <div className="flex gap-1">

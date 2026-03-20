@@ -81,7 +81,7 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    zoom: 85%;
+    
   }
 
   h1,

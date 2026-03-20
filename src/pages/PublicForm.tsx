@@ -77,12 +77,17 @@ export default function PublicForm() {
   return (
     <div className="min-h-screen flex items-start justify-center">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg">
-        <header className="w-full bg-background py-4 px-4">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-normal">{form.title}</h1>
+        <header className="w-full border-b border-foreground sticky top-0 bg-background z-10 mb-8 py-4 px-4">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <h1 className="text-xl font-normal">{form.title}</h1>
+              {form.description && (
+                <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{form.description}</p>
+              )}
+            </div>
             <button
               onClick={toggleTheme}
-              className="p-2 hover:bg-foreground hover:text-background transition-colors"
+              className="p-2 hover:bg-foreground hover:text-background transition-colors flex-shrink-0"
               title={theme === 'dark' ? 'Light mode' : 'Dark mode'}
             >
               {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}

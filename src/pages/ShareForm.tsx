@@ -50,7 +50,7 @@ export default function ShareForm() {
 
       <main className="container mx-auto px-4 py-12 max-w-lg">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.3 }}>
-          <h1 className="text-2xl font-bold mb-12">Share</h1>
+          <h1 className="text-2xl font-bold mb-12">Share your form</h1>
 
           <div className="flex flex-col md:flex-row gap-8">
             <div className="mono-card flex items-center justify-center p-8 bg-foreground">
@@ -62,7 +62,7 @@ export default function ShareForm() {
                 <p className="mono-label text-muted-foreground mb-2">Form Link</p>
                 <div className="flex">
                   <input value={formUrl} readOnly className="mono-input flex-1 text-sm py-3 px-3" />
-                  <button onClick={copyLink} className="mono-btn-primary py-3 px-4">
+                  <button onClick={copyLink} className="py-3 px-4 border-b border-foreground">
                     <Copy className="w-4 h-4" />
                   </button>
                 </div>

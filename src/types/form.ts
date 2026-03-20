@@ -25,6 +25,7 @@ export interface Form {
   id: string;
   user_id: string;
   title: string;
+  description?: string;
   fields: FormField[];
   created_at: string;
   published: boolean;
