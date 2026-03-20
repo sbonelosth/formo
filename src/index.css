@@ -111,7 +111,7 @@
   }
 
   .avatar-lg {
-    @apply w-24 aspect-square rounded-full object-cover my-2;
+    @apply w-6 aspect-square rounded-full object-cover my-2;
   }
 
   .no-avatar {
@@ -119,7 +119,11 @@
   }
 
   .no-avatar-lg {
-    @apply w-24 aspect-square rounded-full border border-foreground bg-foreground text-background flex items-center justify-center text-sm font-bold my-2;
+    @apply w-6 aspect-square rounded-full border border-foreground bg-foreground text-background flex items-center justify-center text-sm font-bold my-2;
+  }
+
+  .menu-btn {
+    @apply w-10 aspect-square flex items-center justify-center text-muted-foreground bg-background shadow-lg rounded-full p-2 hover:bg-foreground hover:text-background transition-colors;
   }
 
   .mono-label {
