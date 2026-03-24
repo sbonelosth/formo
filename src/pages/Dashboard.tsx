@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { Form } from '@/types/form';
-import { Plus, Share2, BarChart3, Trash2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { Plus, Share2, BarChart3, Trash2, AlertTriangle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import Header from '@/components/Header';
 import UserMenu from '@/components/UserMenu';
@@ -15,6 +15,9 @@ export default function Dashboard() {
   const [forms, setForms] = useState<Form[]>([]);
   const [responseCounts, setResponseCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+
+  const confirmDeleteForm = forms.find(f => f.id === confirmDeleteId);
 
   useEffect(() => {
     if (user) loadForms();
@@ -42,13 +45,15 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  const deleteForm = async (id: string) => {
-    const { error } = await supabase.from('forms').delete().eq('id', id);
+  const deleteForm = async () => {
+    if (!confirmDeleteId) return;
+    const { error } = await supabase.from('forms').delete().eq('id', confirmDeleteId);
     if (error) toast.error(error.message);
     else {
-      setForms(forms.filter(f => f.id !== id));
+      setForms(forms.filter(f => f.id !== confirmDeleteId));
       toast.success('Form deleted');
     }
+    setConfirmDeleteId(null);
   };
 
   if (loading) return (
@@ -141,7 +146,7 @@ export default function Dashboard() {
                         </button>
                       )}
                       <button
-                        onClick={(e) => { e.stopPropagation(); deleteForm(form.id); }}
+                        onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(form.id); }}
                         className="p-2 hover:bg-destructive hover:text-destructive-foreground transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -154,6 +159,57 @@ export default function Dashboard() {
           )}
         </motion.div>
       </main>
+
+      {/* Confirm Delete Modal */}
+      <AnimatePresence>
+        {confirmDeleteId && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4"
+            style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
+            onClick={() => setConfirmDeleteId(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="bg-background border border-foreground p-8 w-full max-w-sm"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center gap-3 mb-4">
+                <AlertTriangle className="w-5 h-5 text-destructive flex-shrink-0" />
+                <h2 className="text-lg font-bold">Delete Form</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-1">
+                Are you sure you want to delete
+              </p>
+              <p className="text-sm font-medium mb-8">
+                "{confirmDeleteForm?.title || 'Untitled'}"?
+              </p>
+              <p className="text-xs text-muted-foreground mb-8 -mt-6">
+                This will permanently delete the form and all its responses. This cannot be undone.
+              </p>
+              <div className="flex flex-col gap-2">
+                <button
+                  onClick={deleteForm}
+                  className="mono-btn-primary w-full text-sm py-3 bg-destructive border-destructive hover:bg-destructive/80 hover:border-destructive/80 hover:text-destructive-foreground"
+                >
+                  Delete Permanently
+                </button>
+                <button
+                  onClick={() => setConfirmDeleteId(null)}
+                  className="mono-btn-secondary w-full text-sm py-3"
+                >
+                  Cancel
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

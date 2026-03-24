@@ -105,6 +105,9 @@ export default function Responses() {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
           <div className="mb-12">
             <h1 className="text-2xl font-bold">{form.title}</h1>
+            {form.description && (
+              <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{form.description}</p>
+            )}
             <div className="flex gap-6 mt-4">
               <div className="mono-card flex-1 text-center py-8">
                 <p className="text-2xl font-bold tabular-nums">{responses.length}</p>

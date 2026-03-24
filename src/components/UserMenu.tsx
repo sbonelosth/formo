@@ -19,47 +19,29 @@ export default function UserMenu() {
     const initial = (user?.email?.[0] ?? '?').toUpperCase();
 
     return (
-        <div className="relative">
-            <button
-                onClick={() => setShowMenu(v => !v)}
-                className="p-1 hover:opacity-80 transition-opacity"
-            >
-                {avatarUrl ? (
-                    <img
-                        src={avatarUrl}
-                        alt={fullName || user?.email || 'User'}
-                        className="avatar-sm"
-                        referrerPolicy="no-referrer"
-                    />
-                ) : (
-                    <div className="no-avatar">
-                        {initial}
-                    </div>
-                )}
-            </button>
-
-            {showMenu && (
+        <div className="flex items-center gap-2 relative">
+            {showMenu ? (
                 <div
-                    className="absolute -right-10 top-16 mt-1 z-20 flex items-center gap-2 bg-transparent backdrop-blur-lg p-8 rounded-full"
-                    onMouseLeave={() => setShowMenu(false)}
+                    className="flex items-center gap-2 py-1"
+                // onMouseLeave={() => setShowMenu(false)}
                 >
-                    <div className="flex items-center justify-center bg-background rounded-full px-2 gap-2 shadow-lg">
-                    {avatarUrl ? (
-                        <img
-                            src={avatarUrl}
-                            alt="Avatar"
-                            className="avatar-lg"
-                            referrerPolicy="no-referrer"
-                        />
-                    ) : (
-                        <div className="no-avatar-lg">
-                            <User className="w-4 aspect-square" />
-                        </div>
-                    )}
-                    <p className="w-28 pr-2 text-sm font-medium text-foreground truncate">{user?.email}</p>
+                    <div className="flex items-center justify-center bg-background rounded-full gap-3">
+                        {avatarUrl ? (
+                            <img
+                                src={avatarUrl}
+                                alt="Avatar"
+                                className="avatar-lg"
+                                referrerPolicy="no-referrer"
+                            />
+                        ) : (
+                            <div className="no-avatar-lg">
+                                <User className="w-4 aspect-square" />
+                            </div>
+                        )}
+                        <p className="w-28 pr- py-1 text-sm font-medium text-foreground truncate">{user?.email}</p>
                     </div>
                     {/* <p className="text-sm text-muted-foreground mt-1 mb-4">Hello, {firstName}!</p> */}
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 px-1">
                         <button onClick={handleSignOut} className="menu-btn hover:text-destructive" title='Sign out'>
                             <LogOut className="w-4 aspect-square" />
                         </button>
@@ -68,6 +50,24 @@ export default function UserMenu() {
                         </button>
                     </div>
                 </div>
+            ) : (
+                <button
+                    onClick={() => setShowMenu(v => !v)}
+                    className="p-1 hover:opacity-80 transition-opacity"
+                >
+                    {avatarUrl ? (
+                        <img
+                            src={avatarUrl}
+                            alt={fullName || user?.email || 'User'}
+                            className="avatar-sm"
+                            referrerPolicy="no-referrer"
+                        />
+                    ) : (
+                        <div className="no-avatar">
+                            {initial}
+                        </div>
+                    )}
+                </button>
             )}
         </div>
     );
