@@ -25,7 +25,9 @@ export default function Index() {
         }
         right={
           user ? (
-            <UserMenu />
+            <div className="hidden sm:block">
+              <UserMenu />
+            </div>
           ) : (
             <button onClick={() => navigate('/auth')} className="text-md py-2 pr-4 font-medium">
               Sign In

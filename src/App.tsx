@@ -13,6 +13,7 @@ import ShareForm from "./pages/ShareForm";
 import PublicForm from "./pages/PublicForm";
 import Responses from "./pages/Responses";
 import NotFound from "./pages/NotFound";
+import AuthCallback from "./pages/AuthCallback";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/auth/callback" element={<AuthCallback />} />
               <Route path="/f/:id" element={<PublicForm />} />
               <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/builder" element={<ProtectedRoute><FormBuilder /></ProtectedRoute>} />

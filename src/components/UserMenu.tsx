@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { LogOut, User, X } from 'lucide-react';
 
-export default function UserMenu() {
+export default function UserMenu({ showName }: { showName?: boolean }) {
     const { user, signOut } = useAuth();
     const navigate = useNavigate();
     const [showMenu, setShowMenu] = useState(false);
@@ -12,6 +12,10 @@ export default function UserMenu() {
         await signOut();
         navigate('/');
     };
+
+    const handleShowMenu = () => {
+        setShowMenu(v => !v);
+    }
 
     const avatarUrl = user?.user_metadata?.avatar_url;
     const fullName = user?.user_metadata?.full_name;
@@ -45,14 +49,14 @@ export default function UserMenu() {
                         <button onClick={handleSignOut} className="menu-btn hover:text-destructive" title='Sign out'>
                             <LogOut className="w-4 aspect-square" />
                         </button>
-                        <button onClick={() => setShowMenu(false)} className='menu-btn' title='Close menu'>
+                        <button onClick={handleShowMenu} className='menu-btn' title='Close menu'>
                             <X className="w-4 aspect-square" />
                         </button>
                     </div>
                 </div>
             ) : (
                 <button
-                    onClick={() => setShowMenu(v => !v)}
+                    onClick={handleShowMenu}
                     className="p-1 hover:opacity-80 transition-opacity"
                 >
                     {avatarUrl ? (
