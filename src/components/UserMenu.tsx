@@ -46,11 +46,11 @@ export default function UserMenu({ showName }: { showName?: boolean }) {
                     </div>
                     {/* <p className="text-sm text-muted-foreground mt-1 mb-4">Hello, {firstName}!</p> */}
                     <div className="flex items-center gap-2 px-1">
-                        <button onClick={handleSignOut} className="menu-btn hover:text-destructive" title='Sign out'>
+                        <button onClick={handleSignOut} className="menu-btn" title='Sign out'>
                             <LogOut className="w-4 aspect-square" />
                         </button>
                         <button onClick={handleShowMenu} className='menu-btn' title='Close menu'>
-                            <X className="w-4 aspect-square" />
+                            <X className="w-5 aspect-square" />
                         </button>
                     </div>
                 </div>

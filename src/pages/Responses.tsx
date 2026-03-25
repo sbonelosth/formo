@@ -89,7 +89,7 @@ export default function Responses() {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pb-20">
       <Header
         left={
           <>

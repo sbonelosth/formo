@@ -56,7 +56,7 @@ export default function PublicForm() {
 
   if (submitted) {
     return (
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4 pb-20">
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -75,7 +75,7 @@ export default function PublicForm() {
   const sortedFields = [...(form.fields || [])].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="min-h-screen flex items-start justify-center">
+    <div className="min-h-screen flex items-start justify-center pb-20">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-lg">
         <header className="w-full border-b border-foreground sticky top-0 bg-background z-10 mb-8 py-4 px-4">
           <div className="flex items-start justify-between gap-4">

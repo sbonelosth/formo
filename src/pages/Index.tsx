@@ -15,7 +15,7 @@ export default function Index() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col pb-20">
       <Header
         left={
           <div className='flex items-center gap-2'>
@@ -62,14 +62,6 @@ export default function Index() {
           </div>
         </motion.div>
       </main>
-
-      <footer className="border-t border-foreground py-6">
-        <div className="container mx-auto px-4 text-center">
-          <p className="mono-label text-muted-foreground">
-            © {new Date().getFullYear()} abumanga project. All rights reserved.
-          </p>
-        </div>
-      </footer>
     </div>
   );
 }

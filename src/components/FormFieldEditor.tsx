@@ -66,7 +66,7 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
                     : undefined,
                 });
               }}
-              className="w-full md:w-auto border border-foreground text-sm py-2 px-3 pr-8 appearance-none bg-background text-foreground"
+              className="w-full md:w-auto border text-sm py-2 px-3 pr-8 appearance-none bg-background text-foreground"
             >
               {Object.entries(FIELD_TYPE_LABELS).map(([val, label]) => (
                 <option key={val} value={val}>{label}</option>
@@ -84,17 +84,19 @@ export default function FormFieldEditor({ field, onUpdate, onRemove }: Props) {
               <span className="mono-label w-6 text-muted-foreground">
                 {field.type === 'checkbox' ? '☐' : field.type === 'radio' ? '◯' : '▢'}
               </span>
-              <input
-                value={opt}
-                onChange={(e) => updateOption(i, e.target.value)}
-                className="mono-input flex-1 text-sm py-2 px-3"
-              />
-              <button
-                onClick={() => removeOption(i)}
-                className="p-1 hover:bg-foreground hover:text-background transition-colors rounded-full"
-              >
-                <X className="w-5 h-5 md:w-4 md:h-4" />
-              </button>
+              <div className="relative flex items-center gap-2 flex-1">
+                <input
+                  value={opt}
+                  onChange={(e) => updateOption(i, e.target.value)}
+                  className="mono-input flex-1 text-sm py-2 px-3"
+                />
+                <button
+                  onClick={() => removeOption(i)}
+                  className="absolute right-0 p-1 hover:bg-foreground hover:text-background transition-colors rounded-full"
+                >
+                  <X className="w-5 h-5 md:w-4 md:h-4" />
+                </button>
+              </div>
             </div>
           ))}
           <button

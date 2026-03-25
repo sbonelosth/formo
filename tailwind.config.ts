@@ -23,6 +23,7 @@ export default {
       },
       colors: {
         border: "var(--border)",
+        footer: "var(--border)",
         input: "var(--input)",
         ring: "var(--ring)",
         background: "var(--background)",
